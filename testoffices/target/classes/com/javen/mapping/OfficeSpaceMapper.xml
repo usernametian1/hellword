@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://www.mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.javen.dao.OfficeSpaceDao" >
+  <resultMap id="BaseResultMap" type="com.javen.model.OfficeSpaceDto" >
+    <id column="userid" property="userid" jdbcType="INTEGER" />
+    <result column="user_name" property="userName" jdbcType="VARCHAR" />
+    <result column="division" property="division" jdbcType="VARCHAR" />
+    <result column="floor" property="floor" jdbcType="INTEGER" />
+    <result column="room" property="room" jdbcType="INTEGER" />
+    <result column="seatdetail" property="seatdetail" jdbcType="INTEGER" />
+    <result column="icon" property="icon" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <select id="findOfficeSpace" parameterType="map" resultType="com.javen.model.OfficeSpaceDto">
+     <![CDATA[
+        select * from officespace as t LEFT JOIN officebuild as b on t.buildid = b.buildid
+             LEFT JOIN department as c on c.parentid = t.departmentid 
+             LEFT JOIN lowerdeparent as d on d.id = t.sonpartmentid
+      ]]>
+      <where>
+            <if test="bannerpnn != null and bannerpnn != '' ">
+		        <![CDATA[ and CONCAT(IFNULL(t.userid,'') ,IFNULL(t.username,'') ) like CONCAT('%',#{bannerpnn,jdbcType=VARCHAR},'%') ]]>
+		   </if>
+          </where>
+            ORDER BY t.creatTime DESC
+          <if test="startIndex != null and pageSize != null">LIMIT ${startIndex},${pageSize}</if>
+  </select>
+  
+  <select id="count" parameterType="map" resultType="int">
+     <![CDATA[
+        select count(*) from officespace as t
+      ]]>
+           <where>
+           <if test="bannerpnn != null and bannerpnn != '' ">
+		        <![CDATA[ and CONCAT(IFNULL(t.userid,'') ,IFNULL(t.username,'') ) like CONCAT('%',#{bannerpnn,jdbcType=VARCHAR},'%') ]]>
+		   </if>
+		   
+          </where>
+  </select>
+  
+  <select id="findOfficeSapce" parameterType="map" resultType="com.javen.model.OfficeSpaceDto">
+        <![CDATA[
+          select * from officespace as t
+        ]]>
+        <where>
+          <if test="bannerpnn != null and bannerpnn != '' ">
+		        <![CDATA[ and CONCAT(IFNULL(t.userid,'') ,IFNULL(t.username,'') ) like CONCAT('%',#{bannerpnn,jdbcType=VARCHAR},'%') ]]>
+		   </if>
+		   <if test="userid != null and userid != ''">
+		        <![CDATA[ and userid = #{userid,jdbcType=INTEGER} ]]>
+		   </if>
+        </where>
+  </select>
+  
+  <select id="findByUserid" parameterType="int" resultType="com.javen.model.OfficeSpaceDto">
+        <![CDATA[
+          select * from officespace as t LEFT JOIN officebuild as b on t.buildid = b.buildid
+             LEFT JOIN department as c on c.parentid = t.departmentid
+            LEFT JOIN lowerdeparent as d on d.id = t.sonpartmentid
+            where t.userid = #{t.userid,jdbcType=INTEGER}
+        ]]>
+  </select>
+  
+  
+  <insert id="insert" parameterType="com.javen.model.OfficeSpaceDto">
+     <![CDATA[
+		  INSERT INTO officespace (
+						userid,
+						username,
+						division,
+						floor,
+						room,
+						seatdetail,
+						icon,
+						buildid,
+						creatTime,
+						sonpartmentid,
+						departmentid
+                    )VALUES(
+						#{userid,jdbcType=INTEGER},
+						#{username,jdbcType=VARCHAR},
+						#{division,jdbcType=VARCHAR},
+						#{floor,jdbcType=INTEGER},
+						#{room,jdbcType=INTEGER},
+						#{seatdetail,jdbcType=VARCHAR},
+						#{icon,jdbcType=VARCHAR},
+						#{buildid,jdbcType=INTEGER},
+						#{creatTime ,jdbcType=VARCHAR},
+						#{sonpartmentid,jdbcType=INTEGER},
+						#{departmentid,jdbcType=INTEGER}
+			    );
+     	]]>
+  
+  </insert>
+  
+  <update id="update" parameterType="com.javen.model.OfficeSpaceDto">
+     <![CDATA[
+          update officespace
+     	]]>
+     <set>
+          <if test="username != null ">
+              username = #{username,jdbcType=VARCHAR},
+         </if>
+          <if test="division != null">
+              division = #{division,jdbcType=VARCHAR},
+         </if>
+          <if test="floor != null">
+              floor = #{floor,jdbcType=INTEGER},
+         </if>
+           <if test="room != null">
+              room = #{room,jdbcType=INTEGER},
+         </if>
+           <if test="seatdetail != null">
+              seatdetail = #{seatdetail,jdbcType=VARCHAR},
+         </if>
+          <if test="icon != null">
+              icon = #{icon,jdbcType=VARCHAR},
+         </if>
+         <if test="buildid != null">
+              buildid = #{buildid ,jdbcType=INTEGER},
+         </if>
+           <if test="departmentid != null">
+              departmentid = #{departmentid ,jdbcType=INTEGER},
+         </if>
+           <if test="sonpartmentid != null">
+              sonpartmentid = #{sonpartmentid ,jdbcType=INTEGER},
+         </if>
+     </set>
+       <![CDATA[
+          where userid = #{userid,jdbcType=INTEGER}
+     	]]>
+  </update>
+  
+  <update id="doEditProtrait" parameterType="map">
+      <![CDATA[
+        update officespace 
+      ]]>
+      <set>
+         <if test="icon != null ">
+              icon = #{icon,jdbcType=VARCHAR},
+         </if>
+      </set>
+        <![CDATA[
+          where userid = #{userid,jdbcType=INTEGER}
+     	]]>
+  </update>
+  
+  <delete id="deleteOffice" parameterType="int">
+            <![CDATA[
+              DELETE  FROM officespace WHERE userid = #{userid,jdbcType=INTEGER}
+             ]]>
+  </delete>
+  
+  
+</mapper>

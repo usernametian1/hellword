@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://www.mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.javen.dao.OfficeBuildDao" >
+   
+   <select id="findListBuild" parameterType="map" resultType="com.javen.model.OfficeBuildDto">
+         <![CDATA[ 
+              SELECT  * from officebuild 
+          ]]>
+          <where>
+	           <if test="bannerpnn != null and bannerpnn != '' ">
+			        <![CDATA[ and CONCAT(IFNULL(buildid ,'') ,IFNULL(buildname,'') ) like CONCAT('%',#{buildpnn,jdbcType=VARCHAR},'%') ]]>
+			   </if>
+          </where>
+          
+           <if test="startIndex != null and pageSize != null">LIMIT ${startIndex},${pageSize}</if>
+   </select>
+   
+   <select id="count" parameterType="map" resultType="int">
+	     <![CDATA[ 
+	              SELECT  count(*) from officebuild 
+	      ]]>
+	      
+	      <where>
+	           <if test="bannerpnn != null and bannerpnn != '' ">
+			        <![CDATA[ and CONCAT(IFNULL(buildid ,'') ,IFNULL(buildname,'') ) like CONCAT('%',#{buildpnn,jdbcType=VARCHAR},'%') ]]>
+			   </if>
+          </where>
+    </select>
+     
+	    
+	<insert id="insertBuild" parameterType="com.javen.model.OfficeBuildDto">
+		    <selectKey keyProperty="buildid" order="AFTER" resultType="java.lang.Integer">  
+	               SELECT LAST_INSERT_ID()  
+	        </selectKey>  
+	       <![CDATA[ 
+	           INSERT INTO officebuild (positionicon ,buildname
+	           )VALUES(
+	           #{positionicon,jdbcType=VARCHAR},
+	            #{buildname,jdbcType=VARCHAR}
+	           )
+	       ]]>
+	</insert>	
+	
+	<delete id="deleteBuild">
+	    <![CDATA[ 
+	         DELETE from officebuild where buildid =#{buildid ,jdbcType=INTEGER}
+	       ]]>
+	</delete>
+	
+	<update id="update" parameterType="com.javen.model.OfficeBuildDto">
+		       <![CDATA[
+		          update officebuild
+		     	]]>
+		     <set>
+		          <if test="buildname != null ">
+		              buildname = #{buildname,jdbcType=VARCHAR},
+		         </if>
+		         <if test="positionicon != null">
+		              positionicon = #{positionicon,jdbcType=VARCHAR},
+		         </if>
+		     </set>
+		       <![CDATA[
+		          where buildid = #{buildid,jdbcType=INTEGER}
+		     	]]>
+	</update>
+ 
+    <select id="findAll"  resultType="com.javen.model.OfficeBuildDto">
+	     <![CDATA[ 
+	              SELECT * from officebuild 
+	      ]]>
+     </select>
+     
+</mapper>

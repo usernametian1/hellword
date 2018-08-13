@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zhiyou.offices.dao.OfficeSpaceDao">
+ <insert id="insert" parameterType="com.zhiyou.offices.bean.OfficeSpaceDto">
+ 		<![CDATA[
+		  INSERT INTO officespace (
+						userid,
+						username,
+						division,
+						floor,
+						room,
+						seatdetail,
+						icon
+                                  )
+          VALUES(
+						#{userid},
+						#{username},
+						#{division},
+						#{floor},
+						#{room},
+						#{seatdetail},
+						#{icon}
+			    );
+     	]]>
+ </insert>
+ 
+ <select id="count" parameterType="int" resultType="int">
+     <![CDATA[
+           SELECT count(*) FROM  officespace 
+     ]]>
+	    <if test="startIndex != null and pageSize != null">LIMIT ${startIndex},${pageSize}</if>
+ </select>
+ 
+ <select id="findOfficeSpace" parameterMap="map" resultType="offices.bean.OfficeSpaceDto" >
+         <![CDATA[ 
+              select * from officespace
+          ]]>
+          
+          <where>
+              <if test="username != null and username != ''">
+                  AND username = #{username}
+              </if>
+              
+              <if test="username != null and username != ''">
+                  AND userid = #{userid}
+              </if>
+          </where>
+          <if test="startIndex != null and pageSize != null">LIMIT ${startIndex},${pageSize}</if>
+ </select>
+ 
+ 
+</mapper>
